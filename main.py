@@ -41,14 +41,23 @@ class Index(webapp2.RequestHandler):
 
         # TODO 1
         # Include another form so the user can "cross off" a movie from their list.
-
-
+        crossOffForm = """
+        <form action="/delete" method="post">
+            <label>
+                I want to cross off
+                <input type="text" name="cross-off-movie"/>
+                to my watchlist.
+            </label>
+            <input type="submit" value="Cross It Off"/>
+        </form>
+        """
         # TODO 4 (Extra Credit)
         # modify your form to use a dropdown (<select>) instead a
         # text box (<input type="text"/>)
 
 
-        content = page_header + edit_header + add_form + page_footer
+
+        content = page_header + edit_header + add_form + crossOffForm + page_footer
         self.response.write(content)
 
 
@@ -56,7 +65,6 @@ class AddMovie(webapp2.RequestHandler):
     """ Handles requests coming in to '/add'
         e.g. www.flicklist.com/add
     """
-
     def post(self):
         # look inside the request to figure out what the user typed
         new_movie = self.request.get("new-movie")
@@ -74,11 +82,25 @@ class AddMovie(webapp2.RequestHandler):
 # handle the request from your 'cross-off' form. The user should see a message like:
 # "Star Wars has been crossed off your watchlist".
 
+class CrossOffMovie(webapp2.RequestHandler):
+        def post(self):
+            # look inside the request to figure out what the user typed
+            new_movie = self.request.get("cross-off-movie")
+
+            # build response content
+            new_movie_element = "<strike>" + new_movie + "</strike>"
+            sentence = new_movie_element + " has been deleted from your Watchlist!"
+
+            content = page_header + "<p>" + sentence + "</p>" + page_footer
+            self.response.write(content)
+
+
 
 
 # TODO 3
 # Include a route for your cross-off handler, by adding another tuple to the list below.
 app = webapp2.WSGIApplication([
     ('/', Index),
-    ('/add', AddMovie)
+    ('/add', AddMovie),
+    ('/delete', CrossOffMovie)
 ], debug=True)
