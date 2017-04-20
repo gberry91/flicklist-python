@@ -16,6 +16,8 @@ terrible_movies = [
     "Nine Lives"
 ]
 
+allowed_routes = ('/login,', '/register')
+
 # a list of pages that anyone is allowed to visit
 # (any others require logging in)
 allowed_routes = [
@@ -94,6 +96,14 @@ class Handler(webapp2.RequestHandler):
         user = db.GqlQuery("SELECT * from User WHERE username = '%s'" % username)
         if user:
             return user.get()
+
+    def read_cookie(self, name):
+        return self.request.cookies.get(name)
+
+    def set_cookie(self, name, val):
+        self.response.headers.add('Set-Cookie', '%s=%s; Path=/' % (name, val))
+
+
 
 
 class Index(Handler):
@@ -260,6 +270,8 @@ class Login(Handler):
         else:
             self.login_user(user)
             self.redirect("/")
+
+        self.login_user
 
 
 class Logout(Handler):
